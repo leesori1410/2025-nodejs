@@ -22,6 +22,7 @@
 // 500번대 -> 서버 오류
 
 // Express 활용
+
 const express = require('express');
 const app = express();
 
