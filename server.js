@@ -27,8 +27,16 @@ const express = require('express');
 const app = express();
 const port = 2007;
 
-
 app.use(express.json())
+
+// 라우팅 / 메서드, 경로
+app.get('/swag', (req, res) => {
+    res.send('get swag');
+});
+
+app.post('/swag', (req, res) => {
+    res.send(req.body);
+});
 
 app.post('/swag/:person', (req, res) => {
     res.send(req.params.person);
