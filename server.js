@@ -27,10 +27,13 @@ const express = require('express');
 const app = express();
 const port = 2007;
 
+
+app.use(express.json())
+
 app.post('/swag', (req, res) => {
-    res.send('post swag');
+    res.send(req.body);
 });
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log(`Express server running at http://localhost:${port}`);
 });
