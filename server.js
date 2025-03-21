@@ -25,11 +25,12 @@
 
 const express = require('express');
 const app = express();
+const port = 2007;
 
-app.get('/', (req, res) => {
-    res.send('Hello, Express!');
+app.post('/swag', (req, res) => {
+    res.send('post swag');
 });
 
 app.listen(3000, () => {
-    console.log('Express server running at http://localhost:3000');
+    console.log(`Express server running at http://localhost:${port}`);
 });
