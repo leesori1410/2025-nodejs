@@ -30,8 +30,8 @@ const port = 2007;
 
 app.use(express.json())
 
-app.post('/swag', (req, res) => {
-    res.send(req.body);
+app.post('/swag/:person', (req, res) => {
+    res.send(req.params.person);
 });
 
 app.listen(port, () => {
