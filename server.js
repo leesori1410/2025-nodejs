@@ -24,23 +24,14 @@
 // Express 활용
 
 const express = require('express');
+const swagRouter = require('./routes/swag');
+
 const app = express();
 const port = 2007;
 
-app.use(express.json())
-
-// 라우팅 / 메서드, 경로
-app.get('/swag', (req, res) => {
-    res.send('get swag');
-});
-
-app.post('/swag', (req, res) => {
-    res.send(req.body);
-});
-
-app.post('/swag/:person', (req, res) => {
-    res.send(req.params.person);
-});
+app.use(express.json());
+// get, post 등 다 사용 가능
+app.use('/swag', swagRouter);
 
 app.listen(port, () => {
     console.log(`Express server running at http://localhost:${port}`);
