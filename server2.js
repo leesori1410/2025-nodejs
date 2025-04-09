@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
+const methodOverride = require('method-override');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -22,6 +23,7 @@ db.connect(err => {
   console.log('MySQL 열결 성공');
 })
 
+app.use(methodOverride('_method'));
 app.use(express.json());
 app.use(express.urlencoded({extends: true}));
 
@@ -70,10 +72,6 @@ app.post('/travel', (req, res) => {
   });
 })
 
-app.get('/add-travel', (req, res) => [
-  res.render('addTravel')
-])
-
 app.put('/travel/:id', (req, res) => {
   const travelId = req.params.id;
   const {name} = req.body;
@@ -87,6 +85,24 @@ app.put('/travel/:id', (req, res) => {
     res.render('updateSuccess');
   });
 });
+
+app.get('/travel/:id/edit', (req, res) => {
+  const travelId = req.params.id;
+  const _query = 'SELECT * FROM travellist WHERE id = ?';
+  db.query(_query, [travelId],(err, results) => {
+    if(err){
+      console.error('데이터베이스 쿼리 실패', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    const travel = results[0];
+    res.render('editTravel', {travel});
+  });
+});
+
+app.get('/add-travel', (req, res) => [
+  res.render('addTravel')
+]);
 
 app.listen(port, () => {
   console.log(`Express server running at http://localhost:${port}`);
