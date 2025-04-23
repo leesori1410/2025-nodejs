@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const Travel = require('../models/Travel');
 
 // 전체 게시글 목록 보여주는 페이지
 router.get('/', async (req, res) => {
   try {
-    const _query = 'SELECT * FROM travellist';
-    // 비동기 처리
-    const [results] = await db.query(_query);
-    const travelList = results;
+    const travelList = await Travel.findAll();
     res.render('travel', {travelList});
   } catch (err) {
     console.error('데이터베이스 쿼리 실패', err);
@@ -24,8 +21,7 @@ router.get('/add', (req, res) => {
 router.post('/', async (req, res) => {
   const {name} = req.body;
   try {
-    const _query = 'INSERT INTO travellist (name) VALUES (?)';
-    await db.query(_query, [name])
+    await Travel.create({name});
     res.redirect('/travel');
   } catch (err) {
     console.error('데이터베이스 쿼리 실패', err);
@@ -37,10 +33,11 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const travelId = req.params.id;
   try {
-    const _query = 'SELECT id, name FROM travellist WHERE id = ?';
-    const [results] = await db.query(_query, [travelId]);
-    const travel = results[0];
-    console.log(results[0], travel);
+    const travel = await Travel.findByPk(travelId);
+    if(!travel){
+      res.status(404).send('게시글이 존재하지 않습니다.');
+      return;
+    }
     res.render('travelDetail', {travel});
   } catch (err) {
     console.error('데이터베이스 쿼리 실패', err);
@@ -52,9 +49,11 @@ router.get('/:id', async (req, res) => {
 router.get('/:id/edit', async (req, res) => {
   const travelId = req.params.id;
   try {
-    const _query = 'SELECT * FROM travellist WHERE id = ?';
-    const [results] = await db.query(_query, [travelId]);
-    const travel = results[0];
+    const travel = await Travel.findByPk(travelId);
+    if(!travel){
+      res.status(404).send('게시글이 존재하지 않습니다.');
+      return;
+    }
     res.render('editTravel', {travel});
   } catch (err) {
     console.error('데이터베이스 쿼리 실패', err);
@@ -67,8 +66,12 @@ router.put('/:id', async (req, res) => {
   const travelId = req.params.id;
   const {name} = req.body;
   try {
-    const _query = 'UPDATE travelList SET name = ? WHERE id  = ?';
-    await db.query(_query, [name, travelId]);
+    const travel = await Travel.findByPk(travelId);
+    if(!travel){
+      res.status(404).send('게시글이 존재하지 않습니다.');
+      return;
+    }
+    await travel.update({name});
     res.render('updateSuccess');
   } catch (err) {
     console.error('데이터베이스 쿼리 실패', err);
@@ -80,8 +83,12 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const travelId = req.params.id;
   try {
-    const _query = 'DELETE FROM travelList WHERE id = ?';
-    await db.query(_query, [travelId]);
+    const travel = await Travel.findByPk(travelId);
+    if(!travel){
+      res.status(404).send('게시글이 존재하지 않습니다.');
+      return;
+    }
+    await travel.destroy();
     res.render('deleteSuccess');
   } catch (err) {
     console.err('DB 쿼리 실패', err);

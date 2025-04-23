@@ -4,7 +4,7 @@ const methodOverride = require('method-override');
 const travelRouters = require('./routes/travel');
 
 const app = express();
-const port = 2010;
+const port = 2001;
 
 app.use(methodOverride('_method'));
 app.use(express.json());
